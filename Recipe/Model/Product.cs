@@ -4,19 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Recipe.Model
+namespace Recipes.Model
 {
+    [Serializable]
     public class Product
     {
-        
-        
+
+        #region Свойства
         public int Id { get; }
         public string? Name { get; private set; }
         public string? Description { get; private set; }
-        public string? Unit { get; private set; }
-        public int? Amount { get; private set; }
-        public Product(int id, string? name, string? description, string? unit, int? amount)
+        public string? Amount { get; private set; }
+        #endregion
+        public Product(int id, string? name, string? description, string? amount)
         {
+            #region check
             if (String.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentNullException("name must be not empty", nameof(name));
@@ -29,18 +31,11 @@ namespace Recipe.Model
             {
                 Description = description;
             }
-            if (string.IsNullOrEmpty(unit))
-            {
-                throw new ArgumentNullException("unut must be not empty",nameof(unit));
-            }
-            if (amount < 0)
-            {
-                throw new ArgumentException("amount must be more than 0", nameof(amount));
-            }
+            #endregion
             Id = id;
             Name = name;
-            Unit = unit;
             Amount = amount;
         }
+        public override string ToString() => Name;
     }
 }
