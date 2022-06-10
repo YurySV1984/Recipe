@@ -51,6 +51,8 @@ namespace Recipes.Model
         {
             return _recipes;
         }
+        public int Counter()
+        { return _recipes.Count; }
         
 
         public IEnumerator<Recipe> GetEnumerator()

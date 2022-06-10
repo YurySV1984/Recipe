@@ -19,7 +19,7 @@ namespace Recipes.Controller
         {
             if (string.IsNullOrWhiteSpace(recipeName))
             {
-                throw new ArgumentNullException("Name must be not null", nameof(recipeName));
+                throw new ArgumentNullException(nameof(recipeName), "Name must be not null");
             }
             Recipes = GetRecipes();
             CurrentRecipe = Recipes.SingleOrDefault(recipe => recipe.Name == recipeName);
@@ -41,16 +41,11 @@ namespace Recipes.Controller
                 CurrentRecipe.Description = recipeDescription;
                 CurrentRecipe.AddRange(recipeProducts);
                 Save();
-            }
-            else
-            {
-
-            }
-            
+            }          
         }
 
 
-
+#pragma warning disable SYSLIB0011
 
         /// <summary>
         /// Получить сохраненный список рецептов.
@@ -61,10 +56,10 @@ namespace Recipes.Controller
             var formatter = new BinaryFormatter();
             using (var fs = new FileStream("recipes.dat", FileMode.OpenOrCreate))
             {
-#pragma warning disable SYSLIB0011
-                try
-                {
-                    if (formatter.Deserialize(fs) is RecipeList recipes)
+
+                //try
+                //{
+                    if (fs.Length > 0 && formatter.Deserialize(fs) is RecipeList recipes)
                     {
                         var result = new RecipeList();
                         foreach (var recipe in recipes)
@@ -73,13 +68,13 @@ namespace Recipes.Controller
                         }
                         return result;
                     }
-                }
-                catch (Exception)
-                {
-                    return new RecipeList();
-                }
-#pragma warning restore SYSLIB0011
-                return new RecipeList();
+                    else return new RecipeList();
+                //}
+                //catch (Exception)
+                //{
+                //    return new RecipeList();
+                //}
+                //return new RecipeList();
 
             }
         }
@@ -92,10 +87,10 @@ namespace Recipes.Controller
             var formatter = new BinaryFormatter();
             using (var fs = new FileStream("recipes.dat", FileMode.OpenOrCreate))
             {
-#pragma warning disable SYSLIB0011
                 formatter.Serialize(fs, Recipes);
-#pragma warning restore SYSLIB0011
+
             }
         }
     }
 }
+#pragma warning restore SYSLIB0011

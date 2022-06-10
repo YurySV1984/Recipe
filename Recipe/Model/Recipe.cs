@@ -39,7 +39,10 @@ namespace Recipes.Model
             }
             Name = name;
         }
-
+        public List<Product> GetProducts()
+        {
+            return _products;
+        }
 
 
         public Product this[int index]
