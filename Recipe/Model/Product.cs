@@ -16,7 +16,7 @@ namespace Recipes.Model
         public string? Description { get; private set; }
         public string? Amount { get; private set; }
         #endregion
-        public Product(int id, string? name, string? description, string? amount)
+        public Product(int id, string name, string description, string amount)
         {
             #region check
             if (String.IsNullOrWhiteSpace(name))
@@ -36,6 +36,6 @@ namespace Recipes.Model
             Name = name;
             Amount = amount;
         }
-        public override string ToString() => Name;
+        public override string ToString() => Name + " " + Amount;
     }
 }

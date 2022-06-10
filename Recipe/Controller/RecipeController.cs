@@ -1,6 +1,7 @@
 ﻿using Recipes.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -10,60 +11,91 @@ namespace Recipes.Controller
 {
     public class RecipeController
     {
-        public Recipe? Recipe { get; set; }
-        public RecipeController (string recipeName,string recipeDescription, string recipeCategory)
+        public RecipeList? Recipes { get; set; }
+        public Recipe? CurrentRecipe { get; private set; }
+        public bool IsNewRecipe { get; } = false; 
+
+        public RecipeController (string recipeName)
         {
-            if (string.IsNullOrWhiteSpace(recipeName) || string.IsNullOrWhiteSpace(recipeCategory))
+            if (string.IsNullOrWhiteSpace(recipeName))
             {
-                throw new ArgumentNullException("is null");
+                throw new ArgumentNullException("Name must be not null", nameof(recipeName));
             }
-            Recipe = new Recipe(recipeName, recipeDescription, recipeCategory);
+            Recipes = GetRecipes();
+            CurrentRecipe = Recipes.SingleOrDefault(recipe => recipe.Name == recipeName);
+
+            if (CurrentRecipe == null)
+            {
+                CurrentRecipe = new Recipe(recipeName);
+                Recipes.AddRecipe(CurrentRecipe);
+                IsNewRecipe = true;
+                Save();
+            }
         }
 
-        public void AddProduct(Product product)
+        public void SetRecipe(string recipeDescription, Recipe.Cat recipeCategory, List<Product> recipeProducts)
         {
-            if (product == null)
+            if (((int)recipeCategory) >=0 && ((int)recipeCategory) <= 4)
             {
-                throw new ArgumentNullException("product is null");
+                CurrentRecipe.Category = recipeCategory;
+                CurrentRecipe.Description = recipeDescription;
+                CurrentRecipe.AddRange(recipeProducts);
+                Save();
             }
-            Recipe.Add(product);
+            else
+            {
+
+            }
+            
         }
+
+
+
+
         /// <summary>
-        /// Сохранить рецепт
+        /// Получить сохраненный список рецептов.
+        /// </summary>
+        /// <returns></returns>
+        public RecipeList GetRecipes()
+        {
+            var formatter = new BinaryFormatter();
+            using (var fs = new FileStream("recipes.dat", FileMode.OpenOrCreate))
+            {
+#pragma warning disable SYSLIB0011
+                try
+                {
+                    if (formatter.Deserialize(fs) is RecipeList recipes)
+                    {
+                        var result = new RecipeList();
+                        foreach (var recipe in recipes)
+                        {
+                            result.AddRecipe(recipe);
+                        }
+                        return result;
+                    }
+                }
+                catch (Exception)
+                {
+                    return new RecipeList();
+                }
+#pragma warning restore SYSLIB0011
+                return new RecipeList();
+
+            }
+        }
+
+        /// <summary>
+        /// Сохранить список рецептов.
         /// </summary>
         public void Save()
         {
             var formatter = new BinaryFormatter();
-            using (var fs = new FileStream("recipe.dat", FileMode.OpenOrCreate))
-            {
-                #pragma warning disable SYSLIB0011
-                formatter.Serialize(fs, Recipe);
-                #pragma warning restore SYSLIB0011
-            }
-        }
-        /// <summary>
-        /// Загрузить рецепт.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="FileLoadException"></exception>
-        public RecipeController()
-        {
-            var formatter = new BinaryFormatter();
-            using (var fs = new FileStream("recipe.dat", FileMode.OpenOrCreate))
+            using (var fs = new FileStream("recipes.dat", FileMode.OpenOrCreate))
             {
 #pragma warning disable SYSLIB0011
-                if (formatter.Deserialize(fs) is Recipe recipe)
-                {
-                    Recipe = recipe;
-                }
+                formatter.Serialize(fs, Recipes);
 #pragma warning restore SYSLIB0011
-                else
-                {
-                    Recipe = null;
-                }
             }
-
-            
         }
     }
 }
