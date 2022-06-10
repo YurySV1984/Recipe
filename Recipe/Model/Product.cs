@@ -16,6 +16,8 @@ namespace Recipes.Model
         public string? Description { get; private set; }
         public string? Amount { get; private set; }
         #endregion
+
+        //public Dictionary<string, string> Unit { get; private set; }
         public Product(int id, string name, string description, string amount)
         {
             #region check

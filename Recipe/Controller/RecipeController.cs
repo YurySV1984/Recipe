@@ -11,7 +11,7 @@ namespace Recipes.Controller
 {
     public class RecipeController
     {
-        public RecipeList? Recipes { get; set; }
+        private RecipeList? Recipes { get; set; }
         public Recipe? CurrentRecipe { get; private set; }
         public bool IsNewRecipe { get; } = false; 
 
@@ -42,6 +42,11 @@ namespace Recipes.Controller
                 CurrentRecipe.AddRange(recipeProducts);
                 Save();
             }          
+        }
+
+        public RecipeController()
+        {
+            Recipes = GetRecipes();
         }
 
 
@@ -79,6 +84,17 @@ namespace Recipes.Controller
             }
         }
 
+        public bool DeleteRecipe(string name)
+        {
+
+            if (Recipes.DeleteRecipe(name))
+            {
+                Save();
+                return true;
+            }
+            else return false;
+        }
+
         /// <summary>
         /// Сохранить список рецептов.
         /// </summary>
@@ -88,7 +104,6 @@ namespace Recipes.Controller
             using (var fs = new FileStream("recipes.dat", FileMode.OpenOrCreate))
             {
                 formatter.Serialize(fs, Recipes);
-
             }
         }
     }

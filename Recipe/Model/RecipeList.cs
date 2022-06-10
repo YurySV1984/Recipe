@@ -24,10 +24,18 @@ namespace Recipes.Model
             get => _recipes[index];
             set => _recipes[index] = value;
         }
+        public int Count
+        { get => _recipes.Count; }
 
         public void AddRecipe(Recipe recipe)
         {
             _recipes.Add(recipe);
+        }
+
+        public bool DeleteRecipe(string name)
+        {
+            var s = _recipes.SingleOrDefault(recipe => recipe.Name == name);
+            return _recipes.Remove(s);
         }
 
         public RecipeList()
@@ -51,8 +59,7 @@ namespace Recipes.Model
         {
             return _recipes;
         }
-        public int Counter()
-        { return _recipes.Count; }
+        
         
 
         public IEnumerator<Recipe> GetEnumerator()
