@@ -11,13 +11,10 @@ namespace Recipes.Controller
 {
     public class RecipeController : ControllerBase
     {
-        //private RecipeList? Recipes { get; set; }
-        //public Recipe? CurrentRecipe { get; private set; }
-        public bool IsRecipeExists { get; } = true;
+        public bool IsRecipeExists { get; private set; } = true;
+        private ObservableCollection<Recipe> _recipes = new ObservableCollection<Recipe>();
 
-        private ObservableCollection<Recipe> _recipes;
-
-
+        public RecipeController() { }
         public RecipeController(string recipeName)
         {
             if (string.IsNullOrWhiteSpace(recipeName))
@@ -25,17 +22,10 @@ namespace Recipes.Controller
                 throw new ArgumentNullException(nameof(recipeName), "Name must be not null");
             }
             _recipes = GetRecipes(recipeName);
-            //CurrentRecipe = _recipes.SingleOrDefault(recipe => recipe.Name == recipeName);
-
-            //if (CurrentRecipe == null)
 
             if (_recipes.Count == 0)
             {
-                //CurrentRecipe = new Recipe(recipeName);
-
-                //_recipes.Add(CurrentRecipe);
                 IsRecipeExists = false;
-                //Save("recipes.dat", Recipes._recipes);
             }
         }
 
@@ -54,14 +44,10 @@ namespace Recipes.Controller
             }
         }
 
-        public RecipeController()
-        {
-        }
+        
 
         public ObservableCollection<Recipe> SearchRecipe(string name)
         {
-            //Recipes._recipes = GetRecipes(name);
-            //return Recipes.SearchRecipe(name);
             return GetRecipes(name);
         }
 
@@ -74,22 +60,36 @@ namespace Recipes.Controller
 #pragma warning disable SYSLIB0011
 
         /// <summary>
-        /// Получить сохраненный список рецептов.
+        /// Получить из БД весь список рецептов.
         /// </summary>
         /// <returns></returns>
         public ObservableCollection<Recipe> GetRecipes()
         {
             return Load();
         }
+        /// <summary>
+        /// Возвращает из БД коллекцию рецептов по имени name
+        /// </summary>
+        /// <param name="name">Имя рецепта</param>
+        /// <returns></returns>
         public ObservableCollection<Recipe> GetRecipes(string name)
         {
             return Load(name);
         }
+        /// <summary>
+        /// Возвращает из БД коллекцию рецептов по категории recipeCategory
+        /// </summary>
+        /// <param name="recipeCategory">Категория рецепта</param>
+        /// <returns></returns>
         public ObservableCollection<Recipe> GetRecipes(Recipe.Cat recipeCategory)
         {
             return Load(recipeCategory);
         }
-
+        /// <summary>
+        /// Возвращает результат удаления из БД рецепта и именем name
+        /// </summary>
+        /// <param name="name">Имя рецепта для удаления</param>
+        /// <returns></returns>
         public bool Delete(string name)
         {
             return DeleteRecipe(name);

@@ -40,6 +40,6 @@ namespace Recipes.Model
             Amount = amount;
         }
         public Product() { }
-        public override string ToString() => Name + " " + Amount;
+        //public override string ToString() => Name + " " + Amount;
     }
 }

@@ -23,7 +23,10 @@ namespace Recipes.Controller
         {
             saver.Add(recipe);
         }
-
+        /// <summary>
+        /// Возвращает всю коллекцию рецептов
+        /// </summary>
+        /// <returns></returns>
         protected ObservableCollection<Recipe> Load()
         {
             return saver.Load();
