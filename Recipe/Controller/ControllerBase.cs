@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -11,9 +12,16 @@ namespace Recipes.Controller
 {
     public abstract class ControllerBase
     {
-        protected IDataSaver saver = new DatabaseDataSaver();
+        private static readonly string dataSaver = ConfigurationManager.ConnectionStrings["DataSource"].ConnectionString;
         
         
+        
+        
+        
+        //protected IDataSaver saver = new DatabaseDataSaver();
+        protected IDataSaver saver = dataSaver == "DB"? new DatabaseDataSaver(): new SerializeDataSaver();
+
+
         protected void Save(ObservableCollection<Recipe> recipes)
         {
             saver.Save(recipes);

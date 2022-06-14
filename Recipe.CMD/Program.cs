@@ -146,7 +146,7 @@ void Add()
         }
         recipeController.SetRecipe(name, recipeDescription, recipeCategory, products);
         Console.WriteLine("-----------------------------------------------------------------------------------------------");
-        Console.WriteLine("Recipe {name} added");
+        Console.WriteLine($"Recipe {name} added");
     }
 }
 

@@ -19,18 +19,49 @@ namespace Recipes.Controller
             using (var fs = new FileStream(filename, FileMode.OpenOrCreate))
             {
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
-                if (fs.Length > 0 && formatter.Deserialize(fs) is ObservableCollection<Recipe> items)
+                if (fs.Length > 0 && formatter.Deserialize(fs) is ObservableCollection<Recipe> recipes)
                 {
-                    return items;
+                    return recipes;
                 }
-                else return default(ObservableCollection<Recipe>);
+                else return new ObservableCollection<Recipe>();
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
             }
         }
 
+        public ObservableCollection<Recipe> Load(string name)
+        {
+            return new ObservableCollection<Recipe>(Load().Where(recipe => recipe.Name == name).ToList());
+        }
+
+        public ObservableCollection<Recipe> Load(Recipe.Cat cat)
+        {
+            return new ObservableCollection<Recipe>(Load().Where(recipe => recipe.Category == cat).ToList());
+        }
+
         public void Add(Recipe recipe)
         {
-            throw new NotImplementedException();
+            var recipes = Load();
+            recipes.Add(recipe);
+            Save(recipes);
+        }
+
+
+        
+
+        
+
+        public bool DeleteRecipe(string name)
+        {
+            var result = false;
+            var recipes = Load();
+            var recipeForDeleting = recipes.SingleOrDefault(recipe => recipe.Name == name);
+            if (recipeForDeleting != null)
+            {
+                recipes.Remove(recipeForDeleting);
+                result = true;
+                Save(recipes);
+            }
+            return result;
         }
 
 
@@ -43,21 +74,6 @@ namespace Recipes.Controller
                 formatter.Serialize(fs, recipes);
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
             }
-        }
-
-        public ObservableCollection<Recipe> Load(string name)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<Recipe> Load(Recipe.Cat cat)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool DeleteRecipe(string name)
-        {
-            throw new NotImplementedException();
         }
     }
 }
