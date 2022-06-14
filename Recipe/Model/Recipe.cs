@@ -11,18 +11,21 @@ namespace Recipes.Model
     [Serializable]
     public class Recipe : IEnumerable<Product>
     {
+        public int Id { get; set; }
+        public virtual ICollection<Product> Products { get => _products; set => _products = (List<Product>)value; }
+
         public string Name { get; set; }
         public string? Description { get; set; }
         private List<Product> _products = new List<Product>();
         public Cat Category { get; set; }
-
+        
         public enum Cat
         {            
-            Salads = 0,
-            Soups = 1,
-            Hot = 2,
-            Desert = 3,
-            Drink = 4
+            Салаты = 0,
+            Супы = 1,
+            Горячее = 2,
+            Десерты = 3,
+            Напитки = 4
         }
 
         public Recipe(string name, string description, Cat category)
@@ -31,6 +34,14 @@ namespace Recipes.Model
             Description = description;
             Category = category;
         }
+
+        public static bool CheckCategory(int inputInt)
+        {
+            if (inputInt >= 0 && inputInt <= 4)
+                return true;
+            else return false;
+        }
+
         public Recipe(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -39,6 +50,8 @@ namespace Recipes.Model
             }
             Name = name;
         }
+        public Recipe()
+        { }
         public List<Product> GetProducts()
         {
             return _products;

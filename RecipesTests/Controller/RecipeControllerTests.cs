@@ -12,15 +12,13 @@ namespace Recipes.Controller.Tests
     [TestClass()]
     public class RecipeControllerTests
     {
-        
-
         [TestMethod()]
         public void GetRecipesTest()
         {
             //Arrange
             var recipeName = Guid.NewGuid().ToString();
             var recipeDescription = "descr of " + recipeName;
-            var recipeCategory = Recipe.Cat.Drink;
+            var recipeCategory = Recipe.Cat.Напитки;
             List<Product> products = new List<Product>();
             products.Add(new Product(0, "prodName1", "proddescr1", "prodamount1"));
             products.Add(new Product(1, "prodName2", "proddescr2", "prodamount2"));
@@ -49,7 +47,7 @@ namespace Recipes.Controller.Tests
             //Arrange
             var recipeName = Guid.NewGuid().ToString();
             var recipeDescription = "descr of " + recipeName;
-            var recipeCategory = Recipe.Cat.Drink;
+            var recipeCategory = Recipe.Cat.Напитки;
             List<Product> products = new List<Product>();
             products.Add(new Product(0, "prodName1", "proddescr1", "prodamount1"));
             products.Add(new Product(1, "prodName2", "proddescr2", "prodamount2"));

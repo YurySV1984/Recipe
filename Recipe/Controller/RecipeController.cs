@@ -9,46 +9,67 @@ using System.Threading.Tasks;
 
 namespace Recipes.Controller
 {
-    public class RecipeController
+    public class RecipeController : ControllerBase
     {
-        private RecipeList? Recipes { get; set; }
-        public Recipe? CurrentRecipe { get; private set; }
-        public bool IsNewRecipe { get; } = false; 
+        //private RecipeList? Recipes { get; set; }
+        //public Recipe? CurrentRecipe { get; private set; }
+        public bool IsRecipeExists { get; } = true;
 
-        public RecipeController (string recipeName)
+        private ObservableCollection<Recipe> _recipes;
+
+
+        public RecipeController(string recipeName)
         {
             if (string.IsNullOrWhiteSpace(recipeName))
             {
                 throw new ArgumentNullException(nameof(recipeName), "Name must be not null");
             }
-            Recipes = GetRecipes();
-            CurrentRecipe = Recipes.SingleOrDefault(recipe => recipe.Name == recipeName);
+            _recipes = GetRecipes(recipeName);
+            //CurrentRecipe = _recipes.SingleOrDefault(recipe => recipe.Name == recipeName);
 
-            if (CurrentRecipe == null)
+            //if (CurrentRecipe == null)
+
+            if (_recipes.Count == 0)
             {
-                CurrentRecipe = new Recipe(recipeName);
-                Recipes.AddRecipe(CurrentRecipe);
-                IsNewRecipe = true;
-                Save();
+                //CurrentRecipe = new Recipe(recipeName);
+
+                //_recipes.Add(CurrentRecipe);
+                IsRecipeExists = false;
+                //Save("recipes.dat", Recipes._recipes);
             }
         }
 
-        public void SetRecipe(string recipeDescription, Recipe.Cat recipeCategory, List<Product> recipeProducts)
+        public void SetRecipe(string recipeName, string recipeDescription, Recipe.Cat recipeCategory, List<Product> recipeProducts)
         {
-            if (((int)recipeCategory) >=0 && ((int)recipeCategory) <= 4)
+            if (((int)recipeCategory) >= 0 && ((int)recipeCategory) <= 4)
             {
-                CurrentRecipe.Category = recipeCategory;
-                CurrentRecipe.Description = recipeDescription;
-                CurrentRecipe.AddRange(recipeProducts);
-                Save();
-            }          
+                var newRecipe = new Recipe
+                {
+                    Name = recipeName,
+                    Category = recipeCategory,
+                    Description = recipeDescription
+                };
+                newRecipe.AddRange(recipeProducts);
+                Add(newRecipe);
+            }
         }
 
         public RecipeController()
         {
-            Recipes = GetRecipes();
         }
 
+        public ObservableCollection<Recipe> SearchRecipe(string name)
+        {
+            //Recipes._recipes = GetRecipes(name);
+            //return Recipes.SearchRecipe(name);
+            return GetRecipes(name);
+        }
+
+        public ObservableCollection<Recipe> SearchByCategory(Recipe.Cat recipeCategory)
+        {
+            //return Recipes.SearchByCategory(recipeCategory);
+            return GetRecipes(recipeCategory);
+        }
 
 #pragma warning disable SYSLIB0011
 
@@ -56,55 +77,22 @@ namespace Recipes.Controller
         /// Получить сохраненный список рецептов.
         /// </summary>
         /// <returns></returns>
-        public RecipeList GetRecipes()
+        public ObservableCollection<Recipe> GetRecipes()
         {
-            var formatter = new BinaryFormatter();
-            using (var fs = new FileStream("recipes.dat", FileMode.OpenOrCreate))
-            {
-
-                //try
-                //{
-                    if (fs.Length > 0 && formatter.Deserialize(fs) is RecipeList recipes)
-                    {
-                        var result = new RecipeList();
-                        foreach (var recipe in recipes)
-                        {
-                            result.AddRecipe(recipe);
-                        }
-                        return result;
-                    }
-                    else return new RecipeList();
-                //}
-                //catch (Exception)
-                //{
-                //    return new RecipeList();
-                //}
-                //return new RecipeList();
-
-            }
+            return Load();
+        }
+        public ObservableCollection<Recipe> GetRecipes(string name)
+        {
+            return Load(name);
+        }
+        public ObservableCollection<Recipe> GetRecipes(Recipe.Cat recipeCategory)
+        {
+            return Load(recipeCategory);
         }
 
-        public bool DeleteRecipe(string name)
+        public bool Delete(string name)
         {
-
-            if (Recipes.DeleteRecipe(name))
-            {
-                Save();
-                return true;
-            }
-            else return false;
-        }
-
-        /// <summary>
-        /// Сохранить список рецептов.
-        /// </summary>
-        public void Save()
-        {
-            var formatter = new BinaryFormatter();
-            using (var fs = new FileStream("recipes.dat", FileMode.OpenOrCreate))
-            {
-                formatter.Serialize(fs, Recipes);
-            }
+            return DeleteRecipe(name);
         }
     }
 }

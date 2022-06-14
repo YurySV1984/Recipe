@@ -11,14 +11,15 @@ namespace Recipes.Model
     {
 
         #region Свойства
-        public int Id { get; }
+        public int Id { get; set; }
+        public int RecipeId { get; set; }
+        public virtual Recipe Recipe { get; set; }
+
         public string? Name { get; private set; }
         public string? Description { get; private set; }
         public string? Amount { get; private set; }
         #endregion
-
-        //public Dictionary<string, string> Unit { get; private set; }
-        public Product(int id, string name, string description, string amount)
+        public Product(string name, string description, string amount)
         {
             #region check
             if (String.IsNullOrWhiteSpace(name))
@@ -34,10 +35,11 @@ namespace Recipes.Model
                 Description = description;
             }
             #endregion
-            Id = id;
+            //Id = id;
             Name = name;
             Amount = amount;
         }
+        public Product() { }
         public override string ToString() => Name + " " + Amount;
     }
 }
